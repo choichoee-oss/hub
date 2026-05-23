@@ -1,0 +1,988 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ATON 비서실 공지 생성기</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap');
+
+  :root {
+    --accent: #7C6FE0;
+    --accent-dark: #5A4FC0;
+    --accent-light: #EEECFC;
+    --bg: #F2F1F7;
+    --card-bg: #FFFFFF;
+    --text-main: #1A1A2E;
+    --text-sub: #888899;
+    --shadow: 0 8px 32px rgba(124,111,224,0.10);
+    --shadow-hover: 0 16px 48px rgba(124,111,224,0.22);
+    --radius: 24px;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    min-height: 100vh;
+    padding: 2.5rem 2rem;
+    color: var(--text-main);
+  }
+
+  /* ── Header ── */
+  .header {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    margin-bottom: 2rem;
+  }
+
+  .h-title {
+    font-size: 17px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text-main);
+  }
+
+  .h-sub {
+    font-size: 12px;
+    color: var(--text-sub);
+    font-weight: 300;
+    letter-spacing: 0.02em;
+  }
+
+  /* ── Tabs ── */
+  .tabs {
+    display: flex;
+    gap: 4px;
+    background: #fff;
+    padding: 5px;
+    border-radius: 100px;
+    width: fit-content;
+    margin-bottom: 1.5rem;
+    box-shadow: var(--shadow);
+  }
+
+  .tab {
+    padding: 8px 26px;
+    font-size: 13px;
+    font-weight: 500;
+    letter-spacing: 0.03em;
+    font-family: 'Noto Sans KR', sans-serif;
+    border: none;
+    border-radius: 100px;
+    cursor: pointer;
+    color: var(--text-sub);
+    background: transparent;
+    transition: all 0.22s ease;
+  }
+
+  .tab.on {
+    background: var(--accent);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(124,111,224,0.35);
+  }
+
+  /* ── Grid & Cards ── */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.25rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 2rem;
+    box-shadow: var(--shadow);
+    border: 1px solid #EEEEF5;
+  }
+
+  .clabel {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    color: var(--text-sub);
+    text-transform: uppercase;
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  /* ── Fields ── */
+  .field { margin-bottom: 12px; }
+
+  .field label {
+    display: block;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-sub);
+    margin-bottom: 5px;
+    letter-spacing: 0.03em;
+  }
+
+  .field input, .field select, .field textarea {
+    width: 100%;
+    height: 42px;
+    padding: 0 12px;
+    font-size: 13px;
+    font-family: 'Noto Sans KR', sans-serif;
+    background: #fff;
+    border: 1.5px solid #EEEEF5;
+    border-radius: 12px;
+    color: var(--text-main);
+    outline: none;
+    transition: border-color 0.22s ease, box-shadow 0.22s ease;
+    -webkit-appearance: none;
+  }
+
+  .field textarea {
+    height: auto;
+    padding: 10px 12px;
+    resize: none;
+    line-height: 1.6;
+  }
+
+  .field input:focus, .field select:focus, .field textarea:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(124,111,224,0.15);
+  }
+
+  .field input::placeholder {
+    color: #C4C4CC;
+    font-size: 12px;
+  }
+
+  .r2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+
+  .big-select {
+    width: 100%;
+    height: 46px;
+    padding: 0 12px;
+    font-size: 13px;
+    font-family: 'Noto Sans KR', sans-serif;
+    background: #fff;
+    border: 1.5px solid #EEEEF5;
+    border-radius: 12px;
+    color: var(--text-main);
+    outline: none;
+    margin-bottom: 12px;
+    -webkit-appearance: none;
+    cursor: pointer;
+    transition: border-color 0.22s ease, box-shadow 0.22s ease;
+  }
+
+  .big-select:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(124,111,224,0.15);
+  }
+
+  /* ── Suggestion chips ── */
+  .suggest-row {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 10px;
+    flex-wrap: wrap;
+  }
+
+  .chip {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 5px 13px;
+    border-radius: 100px;
+    background: var(--accent-light);
+    color: var(--accent-dark);
+    border: 1px solid rgba(124,111,224,0.2);
+    cursor: pointer;
+    transition: all 0.22s ease;
+  }
+
+  .chip:hover {
+    background: #DDD9F8;
+    transform: translateY(-1px);
+  }
+
+  /* ── Date preview & warn ── */
+  .date-preview {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--accent-dark);
+    margin-bottom: 8px;
+    min-height: 20px;
+  }
+
+  .warn-box {
+    font-size: 11px;
+    color: #C05C20;
+    background: #FFF5EE;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border-left: 3px solid #E07840;
+    margin-bottom: 10px;
+    line-height: 1.5;
+    display: none;
+  }
+
+  /* ── Generate button ── */
+  .btn-gen {
+    width: 100%;
+    margin-top: 8px;
+    height: 48px;
+    font-size: 14px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 100px;
+    cursor: pointer;
+    transition: background 0.22s ease, transform 0.22s ease, box-shadow 0.22s ease;
+    box-shadow: 0 4px 14px rgba(124,111,224,0.35);
+  }
+
+  .btn-gen:hover {
+    background: var(--accent-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(124,111,224,0.45);
+  }
+
+  /* ── Preview ── */
+  .preview-box {
+    font-size: 13px;
+    line-height: 2;
+    white-space: pre-wrap;
+    color: var(--text-main);
+    background: var(--bg);
+    border: 1.5px solid #EEEEF5;
+    border-radius: 16px;
+    padding: 1.25rem 1.4rem;
+    min-height: 320px;
+    font-family: 'Noto Sans KR', sans-serif;
+    word-break: keep-all;
+  }
+
+  .preview-ph { color: #C4C4CC; }
+
+  /* ── Copy button ── */
+  .btn-copy {
+    width: 100%;
+    margin-top: 12px;
+    height: 44px;
+    font-size: 13px;
+    font-family: 'Noto Sans KR', sans-serif;
+    font-weight: 500;
+    letter-spacing: 0.04em;
+    background: var(--accent-light);
+    color: var(--accent-dark);
+    border: 1.5px solid rgba(124,111,224,0.2);
+    border-radius: 100px;
+    cursor: pointer;
+    transition: all 0.22s ease;
+    display: none;
+  }
+
+  .btn-copy:hover {
+    background: #DDD9F8;
+    transform: translateY(-1px);
+  }
+
+  .btn-copy.ok {
+    color: #3A7A3A !important;
+    border-color: #8ACA8A !important;
+    background: #F0F8F0 !important;
+  }
+
+  /* ── Error & Flash ── */
+  .err {
+    color: #C05050;
+    font-size: 12px;
+    margin-top: 8px;
+    display: none;
+  }
+
+  .flash {
+    font-size: 11px;
+    font-weight: 500;
+    color: #5A8A5A;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+  }
+
+  .flash.on { opacity: 1; }
+
+  /* ── History card ── */
+  .hist-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 2rem;
+    box-shadow: var(--shadow);
+    border: 1px solid #EEEEF5;
+  }
+
+  .hist-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+  }
+
+  .hist-empty {
+    font-size: 12px;
+    color: #C4C4CC;
+    padding: 2rem 0;
+    text-align: center;
+    font-weight: 300;
+  }
+
+  .hist-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .hist-item {
+    display: grid;
+    grid-template-columns: 8px 1fr auto auto;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    background: var(--bg);
+    border: 1px solid #EEEEF5;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: all 0.22s ease;
+  }
+
+  .hist-item:hover {
+    background: rgba(124,111,224,0.05);
+    border-color: rgba(124,111,224,0.2);
+    transform: translateX(2px);
+  }
+
+  .dot { width: 6px; height: 6px; border-radius: 50%; }
+  .dot-m { background: var(--accent); }
+  .dot-r { background: #B09A7A; }
+
+  .hmeta {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    overflow: hidden;
+  }
+
+  .hlabel {
+    font-size: 13px;
+    font-weight: 500;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    color: var(--text-main);
+  }
+
+  .htime {
+    font-size: 11px;
+    color: var(--text-sub);
+    font-weight: 300;
+  }
+
+  .badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 100px;
+    white-space: nowrap;
+    border: 1px solid;
+  }
+
+  .bm {
+    background: var(--accent-light);
+    color: var(--accent-dark);
+    border-color: rgba(124,111,224,0.2);
+  }
+
+  .br {
+    background: #FBF5EC;
+    color: #8A7060;
+    border-color: #E0D0B8;
+  }
+
+  .btn-del {
+    background: transparent;
+    border: none;
+    color: #C4C4CC;
+    cursor: pointer;
+    font-size: 18px;
+    line-height: 1;
+    padding: 0 4px;
+    transition: color 0.22s ease;
+  }
+
+  .btn-del:hover { color: #C05050; }
+
+  .btn-clr {
+    background: var(--bg);
+    border: none;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-sub);
+    font-family: 'Noto Sans KR', sans-serif;
+    padding: 5px 14px;
+    border-radius: 100px;
+    transition: all 0.22s ease;
+  }
+
+  .btn-clr:hover { color: #C05050; background: #FEF0F0; }
+
+  /* ── Hidden panels ── */
+  #panel-restaurant { display: none; }
+  #link-field { display: none; }
+
+  /* ── Input row with search button ── */
+  .input-row { display: flex; gap: 8px; align-items: center; }
+  .input-row input { flex: 1; }
+
+  .btn-search {
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    background: #03C75A;
+    color: #fff;
+    border: none;
+    border-radius: 12px;
+    font-size: 15px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.22s ease, transform 0.22s ease;
+  }
+
+  .btn-search:hover {
+    background: #02a84d;
+    transform: translateY(-1px);
+  }
+
+  /* ── Fetch status ── */
+  .fetch-status {
+    font-size: 11px;
+    margin-top: 5px;
+    min-height: 16px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    font-weight: 500;
+  }
+
+  .fetch-status.loading { color: var(--text-sub); }
+  .fetch-status.ok      { color: #3A7A3A; }
+  .fetch-status.warn    { color: #B06020; }
+  .fetch-status.err     { color: #C05050; }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinner {
+    display: inline-block;
+    width: 11px;
+    height: 11px;
+    border: 2px solid #EEEEF5;
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+
+  /* ── Map hint ── */
+  .map-hint {
+    font-size: 11px;
+    color: var(--text-sub);
+    margin-top: 5px;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <span class="h-title">ATON 비서실 공지 생성기</span>
+  <span class="h-sub">회의 · 식당 통합</span>
+</div>
+
+<div class="tabs">
+  <button class="tab on" onclick="switchTab('meeting')">회의 공지</button>
+  <button class="tab" onclick="switchTab('restaurant')">식당 공지</button>
+</div>
+
+<div class="grid">
+  <!-- 입력 패널 -->
+  <div class="card">
+    <div class="clabel">예약 정보</div>
+
+    <!-- 회의 공지 -->
+    <div id="panel-meeting">
+      <div class="field">
+        <label>회의 선택</label>
+        <select class="big-select" id="meetingType" onchange="onMeetingChange()">
+          <option value="">-- 회의를 선택하세요 --</option>
+          <option>임원회의</option>
+          <option>고문님 미팅</option>
+          <option>시큐리티센터 주간회의</option>
+          <option>코넥회의</option>
+          <option>에이블컴 주간회의</option>
+          <option>DSE회의</option>
+          <option>쿼터백 월간회의</option>
+        </select>
+      </div>
+      <div class="suggest-row" id="suggestRow"></div>
+      <div class="field">
+        <label>날짜</label>
+        <input type="date" id="mDate" onchange="onMDateChange()">
+      </div>
+      <div class="date-preview" id="datePreview"></div>
+      <div class="warn-box" id="warnBox"></div>
+      <div class="field" id="link-field">
+        <label>링크 (Zoom 등)</label>
+        <input type="text" id="mLink" placeholder="https://zoom.us/j/...">
+      </div>
+    </div>
+
+    <!-- 식당 공지 -->
+    <div id="panel-restaurant">
+      <div class="r2">
+        <div class="field"><label>날짜</label><input type="date" id="rDate"></div>
+        <div class="field"><label>시간</label><input type="time" id="rTime" value="18:00"></div>
+      </div>
+      <div class="r2">
+        <div class="field">
+          <label>식사 유형</label>
+          <select id="rMealType">
+            <option value="만찬">만찬 (저녁)</option>
+            <option value="오찬">오찬 (점심)</option>
+            <option value="조찬">조찬 (아침)</option>
+            <option value="식사">식사</option>
+          </select>
+        </div>
+        <div class="field"><label>예약인원</label><input type="number" id="rGuests" min="1" max="50" placeholder="예: 3"></div>
+      </div>
+      <div class="field">
+        <label>장소명</label>
+        <div class="input-row">
+          <input type="text" id="rPlace" placeholder="예: 풍천가 강남직영점">
+          <button class="btn-search" title="네이버 지도에서 검색" onclick="searchNaver()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </button>
+        </div>
+      </div>
+      <div class="field"><label>주소</label><input type="text" id="rAddr" placeholder="예: 서울 강남구 언주로93길 30 지하1층"></div>
+      <div class="field"><label>연락처</label><input type="text" id="rTel" placeholder="예: 0507-1311-6255"></div>
+      <div class="field"><label>예약자명 (기본값: 김종서)</label><input type="text" id="rName" placeholder="김종서"></div>
+      <div class="field">
+        <label>네이버 지도 링크</label>
+        <input type="text" id="rMap" placeholder="https://naver.me/... 붙여넣으면 자동입력"
+          oninput="onMapInput(this.value)">
+        <div class="fetch-status" id="fetchStatus"></div>
+        <div class="map-hint" id="mapHint">💡 naver.me 링크를 붙여넣으면 장소명·주소·연락처가 자동으로 채워집니다</div>
+      </div>
+    </div>
+
+    <div class="err" id="errMsg"></div>
+    <button class="btn-gen" onclick="generate()">메시지 생성 →</button>
+  </div>
+
+  <!-- 미리보기 -->
+  <div class="card">
+    <div class="clabel">
+      <span>미리보기</span>
+      <span class="flash" id="flash">✓ 히스토리 저장됨</span>
+    </div>
+    <div class="preview-box" id="preview">
+      <span class="preview-ph">왼쪽 폼을 채우고&#10;[메시지 생성] 버튼을 누르면&#10;공지 메시지가&#10;여기에 나타납니다.</span>
+    </div>
+    <button class="btn-copy" id="btnCopy" onclick="copyMsg()">클립보드 복사</button>
+  </div>
+</div>
+
+<!-- 히스토리 -->
+<div class="hist-card">
+  <div class="hist-head">
+    <div class="clabel" style="margin:0" id="histLabel">히스토리</div>
+    <button class="btn-clr" onclick="clearAll()" id="btnClearAll" style="display:none">전체 삭제</button>
+  </div>
+  <div class="hist-empty" id="histEmpty">메시지를 생성하면 회의 · 식당 공지가 함께 기록됩니다.</div>
+  <div class="hist-list" id="histList"></div>
+</div>
+
+<script>
+const DAYS = ['일','월','화','수','목','금','토'];
+const STORAGE_KEY = 'aton-notice-html';
+
+const MEETINGS = {
+  '임원회의':              { dow:1, freq:'weekly',      time:'11:00', loc:'아톤(여의도)' },
+  '고문님 미팅':           { dow:1, freq:'weekly',      time:'12:00', loc:'외부' },
+  '시큐리티센터 주간회의': { dow:1, freq:'weekly',      time:'14:00', loc:'의장님 집무실' },
+  '코넥회의':              { dow:3, freq:'weekly',      time:'14:00', hasLink:true, announceName:'코넥 주간회의' },
+  '에이블컴 주간회의':     { dow:2, freq:'biweekly',   time:'14:00', loc:'아톤(여의도)', refDate:'2026-01-06' },
+  'DSE회의':               { dow:3, freq:'biweekly',   time:'15:00', hasLink:true, announceName:'DSE 주간회의', refDate:'2026-01-07' },
+  '쿼터백 월간회의':       { dow:1, freq:'monthly_nth', nth:2, time:'15:00', loc:'의장님 집무실' },
+};
+
+let currentTab = 'meeting';
+let history = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+let currentMsg = '';
+
+function getNextWeekly(dow, from) {
+  const d = new Date(from); let diff = dow - d.getDay();
+  if (diff <= 0) diff += 7; d.setDate(d.getDate() + diff); return d;
+}
+function getNextBiweekly(dow, ref, from) {
+  const refD = new Date(ref); const d = new Date(from);
+  let diff = dow - d.getDay(); if (diff <= 0) diff += 7; d.setDate(d.getDate() + diff);
+  const w = Math.round((d - refD) / (7*86400000));
+  if (w % 2 !== 0) d.setDate(d.getDate() + 7); return d;
+}
+function getNextNth(nth, dow, from) {
+  const d = new Date(from);
+  function calc(y, m) {
+    let cnt = 0; const cur = new Date(y, m, 1);
+    while (cur.getMonth() === m) { if (cur.getDay() === dow && ++cnt === nth) return new Date(cur); cur.setDate(cur.getDate()+1); }
+    return null;
+  }
+  let r = calc(d.getFullYear(), d.getMonth());
+  if (!r || r <= d) { const nx = new Date(d.getFullYear(), d.getMonth()+1, 1); r = calc(nx.getFullYear(), nx.getMonth()); }
+  return r;
+}
+function toInput(d) { return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; }
+function fmtKo(d) { return `${d.getMonth()+1}/${d.getDate()}(${DAYS[d.getDay()]})`; }
+function fmtFull(dateStr, timeStr) {
+  if (!dateStr) return '';
+  const [y,m,day] = dateStr.split('-').map(Number);
+  const d = new Date(y, m-1, day);
+  return `${m}월 ${day}일(${DAYS[d.getDay()]}) ${timeStr}`;
+}
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.getElementById('panel-meeting').style.display = tab === 'meeting' ? 'block' : 'none';
+  document.getElementById('panel-restaurant').style.display = tab === 'restaurant' ? 'block' : 'none';
+  document.querySelectorAll('.tab').forEach((el,i) => el.classList.toggle('on', (i===0 && tab==='meeting') || (i===1 && tab==='restaurant')));
+  setPreview('', true); hideErr();
+}
+
+function onMeetingChange() {
+  const mType = document.getElementById('meetingType').value;
+  const row = document.getElementById('suggestRow');
+  const warn = document.getElementById('warnBox');
+  warn.style.display = 'none';
+  row.innerHTML = '';
+  document.getElementById('link-field').style.display = 'none';
+  document.getElementById('datePreview').textContent = '';
+  if (!mType) return;
+  const conf = MEETINGS[mType];
+  if (conf.hasLink) document.getElementById('link-field').style.display = 'block';
+
+  const today = new Date(); today.setHours(0,0,0,0);
+  let suggs = [];
+  if (conf.freq === 'weekly') suggs = [{ label:`다음 ${DAYS[conf.dow]}요일`, d: getNextWeekly(conf.dow, today) }];
+  else if (conf.freq === 'biweekly') {
+    const s1 = getNextBiweekly(conf.dow, conf.refDate, today);
+    const s2 = getNextBiweekly(conf.dow, conf.refDate, new Date(s1.getTime()+86400000));
+    suggs = [{ label:'이번 차', d:s1 }, { label:'다음 차', d:s2 }];
+  } else if (conf.freq === 'monthly_nth') {
+    suggs = [{ label:`${conf.nth}주차 ${DAYS[conf.dow]}요일`, d: getNextNth(conf.nth, conf.dow, today) }];
+  }
+
+  suggs.forEach(s => {
+    const btn = document.createElement('button');
+    btn.className = 'chip';
+    btn.textContent = `📅 ${s.label} ${fmtKo(s.d)}`;
+    btn.onclick = () => applyDate(toInput(s.d));
+    row.appendChild(btn);
+  });
+
+  if (suggs.length > 0) applyDate(toInput(suggs[0].d));
+}
+
+function applyDate(dateStr) {
+  document.getElementById('mDate').value = dateStr;
+  onMDateChange();
+}
+
+function onMDateChange() {
+  const val = document.getElementById('mDate').value;
+  const mType = document.getElementById('meetingType').value;
+  if (!val || !mType) return;
+  const conf = MEETINGS[mType];
+  const [y,m,d] = val.split('-').map(Number);
+  const obj = new Date(y, m-1, d);
+  document.getElementById('datePreview').textContent = `${fmtKo(obj)} ${conf.time}`;
+  const warn = document.getElementById('warnBox');
+  if (obj.getDay() !== conf.dow) {
+    warn.textContent = `⚠ 선택하신 날짜(${DAYS[obj.getDay()]}요일)가 일반 회의 요일(${DAYS[conf.dow]}요일)과 다릅니다.`;
+    warn.style.display = 'block';
+  } else { warn.style.display = 'none'; }
+}
+
+function generate() {
+  hideErr();
+  const missing = [];
+  if (currentTab === 'meeting') {
+    const mType = document.getElementById('meetingType').value;
+    const mDate = document.getElementById('mDate').value;
+    const mLink = document.getElementById('mLink').value.trim();
+    if (!mType) missing.push('회의 선택');
+    if (!mDate) missing.push('날짜');
+    if (mType && MEETINGS[mType]?.hasLink && !mLink) missing.push('링크');
+    if (missing.length) { showErr(missing); return; }
+
+    const conf = MEETINGS[mType];
+    const [y,m,d] = mDate.split('-').map(Number);
+    const obj = new Date(y, m-1, d);
+    const dateStr2 = `${fmtKo(obj)} ${conf.time}`;
+    const name = conf.announceName || mType;
+    let msg = `안녕하세요. 비서실 최효민 프로입니다.\n${name} 안내 드립니다.\n\n`;
+    msg += `• 일시: ${dateStr2}\n`;
+    msg += conf.hasLink ? `• 링크 : ${mLink}\n` : `• 장소: ${conf.loc}\n`;
+    msg += `\n변경 사항이 있을 경우 다시 안내 드리겠습니다.\n감사합니다.`;
+    setPreview(msg);
+    addHistory({ type:'meeting', label:name, datetime:dateStr2, badge:mType, msg });
+
+  } else {
+    const date = document.getElementById('rDate').value;
+    const time = document.getElementById('rTime').value;
+    const mealType = document.getElementById('rMealType').value;
+    const place = document.getElementById('rPlace').value.trim();
+    const addr = document.getElementById('rAddr').value.trim();
+    const tel = document.getElementById('rTel').value.trim();
+    const name = document.getElementById('rName').value.trim() || '김종서';
+    const guests = document.getElementById('rGuests').value;
+    const map = document.getElementById('rMap').value.trim();
+    if (!date) missing.push('날짜');
+    if (!guests) missing.push('예약인원');
+    if (!place) missing.push('장소명');
+    if (!addr) missing.push('주소');
+    if (!tel) missing.push('연락처');
+    if (missing.length) { showErr(missing); return; }
+
+    const datetime = fmtFull(date, time);
+    const mapLine = map ? `[네이버 지도]\n${map}` : '※ 네이버 지도 링크를 함께 전달해 주시면 추가하겠습니다.';
+    const msg = `안녕하세요, ATON 비서실 최효민입니다.\n아래와 같이 ${mealType} 일정을 안내드립니다.\n확인 부탁드립니다.\n\n■ 일시: ${datetime}\n■ 장소: ${place}\n■ 주소: ${addr}\n■ 연락처: ${tel}\n■ 예약자명: ${name}\n■ 예약인원: ${guests}명\n\n${mapLine}\n\n감사합니다.`;
+    setPreview(msg);
+    addHistory({ type:'restaurant', label:place, datetime, badge:mealType, msg });
+  }
+}
+
+function setPreview(msg, reset) {
+  currentMsg = msg;
+  const box = document.getElementById('preview');
+  const btn = document.getElementById('btnCopy');
+  if (reset || !msg) {
+    box.innerHTML = '<span class="preview-ph">왼쪽 폼을 채우고\n[메시지 생성] 버튼을 누르면\n공지 메시지가\n여기에 나타납니다.</span>';
+    btn.style.display = 'none';
+  } else {
+    box.textContent = msg;
+    btn.style.display = '';
+    btn.classList.remove('ok');
+    btn.textContent = '클립보드 복사';
+  }
+}
+
+function copyMsg() {
+  if (!currentMsg) return;
+  navigator.clipboard.writeText(currentMsg).then(() => {
+    const btn = document.getElementById('btnCopy');
+    btn.classList.add('ok'); btn.textContent = '✓  복사 완료';
+    setTimeout(() => { btn.classList.remove('ok'); btn.textContent = '클립보드 복사'; }, 2000);
+  });
+}
+
+function showErr(missing) {
+  const el = document.getElementById('errMsg');
+  el.textContent = '⚠ 필수 항목: ' + missing.join(', ');
+  el.style.display = '';
+}
+function hideErr() { document.getElementById('errMsg').style.display = 'none'; }
+
+function addHistory(entry) {
+  entry.id = Date.now();
+  entry.createdAt = new Date().toLocaleString('ko-KR', { month:'numeric', day:'numeric', hour:'2-digit', minute:'2-digit' });
+  history = [entry, ...history].slice(0, 30);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+  renderHistory();
+  const fl = document.getElementById('flash');
+  fl.classList.add('on'); setTimeout(() => fl.classList.remove('on'), 1500);
+}
+
+function renderHistory() {
+  const list = document.getElementById('histList');
+  const empty = document.getElementById('histEmpty');
+  const label = document.getElementById('histLabel');
+  const clrBtn = document.getElementById('btnClearAll');
+  list.innerHTML = '';
+  if (history.length === 0) { empty.style.display = ''; clrBtn.style.display = 'none'; label.textContent = '히스토리'; return; }
+  empty.style.display = 'none'; clrBtn.style.display = '';
+  const mCnt = history.filter(h => h.type === 'meeting').length;
+  const rCnt = history.filter(h => h.type === 'restaurant').length;
+  label.textContent = `히스토리  회의 ${mCnt} · 식당 ${rCnt}`;
+
+  history.forEach(item => {
+    const row = document.createElement('div');
+    row.className = 'hist-item';
+    row.innerHTML = `
+      <div class="dot ${item.type === 'meeting' ? 'dot-m' : 'dot-r'}"></div>
+      <div class="hmeta">
+        <span class="hlabel">${item.label}</span>
+        <span class="htime">${item.datetime} · ${item.createdAt} 생성</span>
+      </div>
+      <span class="badge ${item.type === 'meeting' ? 'bm' : 'br'}">${item.badge}</span>
+      <button class="btn-del" title="삭제">×</button>
+    `;
+    row.querySelector('.btn-del').onclick = (e) => { e.stopPropagation(); deleteItem(item.id); };
+    row.onclick = () => loadItem(item);
+    list.appendChild(row);
+  });
+}
+
+function loadItem(item) {
+  switchTab(item.type);
+  setPreview(item.msg);
+  if (item.type === 'meeting') {
+    document.getElementById('meetingType').value = item.badge;
+    onMeetingChange();
+  }
+}
+
+function deleteItem(id) {
+  history = history.filter(h => h.id !== id);
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+  renderHistory();
+}
+
+function clearAll() {
+  if (!confirm('히스토리를 전부 삭제할까요?')) return;
+  history = []; localStorage.removeItem(STORAGE_KEY); renderHistory();
+}
+
+// ── 네이버 연동 ──────────────────────────────────────────────
+
+function searchNaver() {
+  const name = document.getElementById('rPlace').value.trim();
+  const query = name || '식당';
+  window.open('https://map.naver.com/v5/search/' + encodeURIComponent(query), '_blank');
+}
+
+let mapInputTimer = null;
+function onMapInput(val) {
+  clearTimeout(mapInputTimer);
+  const v = val.trim();
+  if (!v) { setFetchStatus(''); return; }
+  if (!v.startsWith('http')) return;
+  // debounce 600ms (붙여넣기 완료 후 실행)
+  mapInputTimer = setTimeout(() => fetchPlaceInfo(v), 600);
+}
+
+async function fetchPlaceInfo(url) {
+  setFetchStatus('loading', '불러오는 중...');
+  document.getElementById('mapHint').style.display = 'none';
+
+  try {
+    const proxyUrl = 'https://api.allorigins.win/get?url=' + encodeURIComponent(url);
+    const res = await fetch(proxyUrl, { signal: AbortSignal.timeout(10000) });
+    if (!res.ok) throw new Error('network');
+    const data = await res.json();
+    const html = data.contents || '';
+
+    let name = '', addr = '', tel = '';
+
+    // 1) window.__PLACE_STATE__ JSON (가장 상세)
+    const stateMatch = html.match(/window\.__PLACE_STATE__\s*=\s*(\{[\s\S]*?\});\s*(?:window|<\/script>)/);
+    if (stateMatch) {
+      try {
+        const s = JSON.parse(stateMatch[1]);
+        const p = s?.placeDetail || s?.place || s;
+        name = p?.name || p?.placeName || '';
+        addr = p?.roadAddress || p?.address || p?.jibunAddress || '';
+        tel  = p?.tel || p?.phone || p?.telephone || '';
+      } catch(e) {}
+    }
+
+    // 2) JSON-LD
+    if (!name || !addr) {
+      const ldMatch = html.match(/<script[^>]+type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/);
+      if (ldMatch) {
+        try {
+          const ld = JSON.parse(ldMatch[1]);
+          if (!name) name = ld.name || '';
+          if (!addr) addr = ld.address?.streetAddress || (typeof ld.address === 'string' ? ld.address : '') || '';
+          if (!tel)  tel  = ld.telephone || '';
+        } catch(e) {}
+      }
+    }
+
+    // 3) og: 메타 태그 (최후 수단)
+    if (!name) {
+      const m = html.match(/<meta[^>]+(?:property="og:title"|name="og:title")[^>]+content="([^"]+)"/i)
+             || html.match(/<meta[^>]+content="([^"]+)"[^>]+(?:property="og:title"|name="og:title")/i);
+      if (m) name = m[1].replace(/\s*[:|]\s*네이버지도.*/i,'').replace(/\s*[-|]\s*Naver Map.*/i,'').trim();
+    }
+    if (!addr) {
+      const m = html.match(/<meta[^>]+(?:property="og:description"|name="description")[^>]+content="([^"]+)"/i)
+             || html.match(/<meta[^>]+content="([^"]+)"[^>]+(?:property="og:description"|name="description")/i);
+      if (m) {
+        // og:description 에서 주소 부분만 추출 시도
+        const raw = m[1];
+        const addrPart = raw.match(/(?:서울|경기|부산|대구|인천|광주|대전|울산|세종|강원|충북|충남|전북|전남|경북|경남|제주)[^\n,·]*/);
+        addr = addrPart ? addrPart[0].trim() : raw.split('·')[0].trim();
+      }
+    }
+
+    // 결과 적용
+    if (name || addr || tel) {
+      const filled = [];
+      if (name && !document.getElementById('rPlace').value) {
+        document.getElementById('rPlace').value = name; filled.push('장소명');
+      }
+      if (addr && !document.getElementById('rAddr').value) {
+        document.getElementById('rAddr').value = addr; filled.push('주소');
+      }
+      if (tel && !document.getElementById('rTel').value) {
+        document.getElementById('rTel').value = tel; filled.push('연락처');
+      }
+      if (filled.length > 0) {
+        setFetchStatus('ok', '✓ ' + filled.join(' · ') + ' 자동입력 완료');
+      } else {
+        setFetchStatus('ok', '✓ 링크 확인됨 (이미 입력된 항목은 유지)');
+      }
+    } else {
+      setFetchStatus('warn', '⚠ 정보를 가져오지 못했습니다. 수동 입력해 주세요.');
+    }
+  } catch(e) {
+    if (e.name === 'TimeoutError') {
+      setFetchStatus('err', '⚠ 시간 초과 — 수동 입력해 주세요.');
+    } else {
+      setFetchStatus('err', '⚠ 연결 실패 — 수동 입력해 주세요.');
+    }
+  }
+
+  setTimeout(() => { setFetchStatus(''); document.getElementById('mapHint').style.display = ''; }, 5000);
+}
+
+function setFetchStatus(type, msg) {
+  const el = document.getElementById('fetchStatus');
+  el.className = 'fetch-status' + (type ? ' ' + type : '');
+  if (!type || !msg) { el.innerHTML = ''; return; }
+  if (type === 'loading') {
+    el.innerHTML = '<span class="spinner"></span>' + msg;
+  } else {
+    el.textContent = msg;
+  }
+}
+
+// 초기화
+renderHistory();
+</script>
+</body>
+</html>

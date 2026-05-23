@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>의장님 증서·계약서 관리 대시보드</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --accent: #7C6FE0;
+    --accent-dark: #5A4FC0;
+    --accent-light: #EEECFC;
+    --bg: #F2F1F7;
+    --card-bg: #FFFFFF;
+    --text-main: #1A1A2E;
+    --text-sub: #888899;
+    --border: #EEEEF5;
+    --shadow: 0 8px 32px rgba(124,111,224,0.10);
+    --shadow-hover: 0 16px 48px rgba(124,111,224,0.22);
+    --radius: 24px;
+  }
+
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Noto Sans KR', sans-serif;
+    background: var(--bg);
+    color: var(--text-main);
+    min-height: 100vh;
+    padding: 40px 24px;
+  }
+
+  /* ─── HEADER ─── */
+  .header {
+    max-width: 1100px;
+    margin: 0 auto 36px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    padding-bottom: 24px;
+    border-bottom: 2px solid var(--border);
+  }
+
+  .header-left h1 {
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    color: var(--text-main);
+  }
+
+  .header-left p {
+    font-size: 13px;
+    color: var(--text-sub);
+    margin-top: 6px;
+    font-weight: 300;
+  }
+
+  .header-date {
+    font-size: 12px;
+    color: var(--accent-dark);
+    font-weight: 500;
+    background: var(--accent-light);
+    padding: 6px 18px;
+    border-radius: 100px;
+    white-space: nowrap;
+  }
+
+  /* ─── SUMMARY CARDS ─── */
+  .summary-grid {
+    max-width: 1100px;
+    margin: 0 auto 32px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+  }
+
+  .summary-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 24px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: var(--shadow);
+    transition: transform 0.28s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.28s ease;
+  }
+
+  .summary-card:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-hover);
+  }
+
+  .summary-card .label {
+    font-size: 11px;
+    color: var(--text-sub);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  .summary-card .value {
+    font-size: 36px;
+    font-weight: 700;
+    color: var(--text-main);
+    line-height: 1;
+  }
+
+  .summary-card .sub {
+    font-size: 12px;
+    color: var(--text-sub);
+    font-weight: 300;
+  }
+
+  /* ─── CONTROLS ─── */
+  .controls {
+    max-width: 1100px;
+    margin: 0 auto 24px;
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .search-box {
+    flex: 1;
+    min-width: 200px;
+    position: relative;
+  }
+
+  .search-box input {
+    width: 100%;
+    padding: 11px 16px 11px 42px;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    background: var(--card-bg);
+    font-family: 'Noto Sans KR', sans-serif;
+    font-size: 14px;
+    color: var(--text-main);
+    outline: none;
+    transition: border-color 0.22s ease, box-shadow 0.22s ease;
+    box-shadow: var(--shadow);
+  }
+
+  .search-box input::placeholder { color: var(--text-sub); }
+
+  .search-box input:focus {
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(124,111,224,0.15);
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--text-sub);
+    font-size: 14px;
+    pointer-events: none;
+  }
+
+  .filter-tabs {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .filter-tab {
+    padding: 9px 16px;
+    border-radius: 100px;
+    border: 1.5px solid var(--border);
+    background: var(--card-bg);
+    font-size: 13px;
+    font-family: 'Noto Sans KR', sans-serif;
+    color: var(--text-sub);
+    cursor: pointer;
+    transition: all 0.22s ease;
+    font-weight: 400;
+    box-shadow: 0 2px 8px rgba(124,111,224,0.06);
+  }
+
+  .filter-tab:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: var(--accent-light);
+  }
+
+  .filter-tab.active {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+    font-weight: 500;
+    box-shadow: 0 4px 14px rgba(124,111,224,0.35);
+  }
+
+  /* ─── SECTIONS ─── */
+  .sections {
+    max-width: 1100px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .section {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: var(--shadow);
+    transition: box-shadow 0.28s ease, transform 0.28s cubic-bezier(0.34,1.56,0.64,1);
+  }
+
+  .section:hover {
+    box-shadow: var(--shadow-hover);
+    transform: translateY(-2px);
+  }
+
+  .section-header {
+    display: flex;
+    align-items: center;
+    padding: 18px 24px;
+    cursor: pointer;
+    user-select: none;
+    gap: 12px;
+  }
+
+  .section-accent {
+    width: 4px;
+    height: 28px;
+    border-radius: 3px;
+    flex-shrink: 0;
+  }
+
+  .section-title {
+    font-size: 15px;
+    font-weight: 600;
+    flex: 1;
+    color: var(--text-main);
+    letter-spacing: -0.02em;
+  }
+
+  .section-count {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 100px;
+    color: #fff;
+  }
+
+  .section-toggle {
+    color: var(--text-sub);
+    font-size: 11px;
+    transition: transform 0.22s ease;
+  }
+
+  .section-toggle.open { transform: rotate(180deg); }
+
+  .section-body {
+    border-top: 1px solid var(--border);
+    overflow: hidden;
+    max-height: 0;
+    transition: max-height 0.3s ease;
+  }
+
+  .section-body.open { max-height: 600px; }
+
+  .file-list { padding: 8px 0; }
+
+  .file-item {
+    display: flex;
+    align-items: center;
+    padding: 12px 24px 12px 40px;
+    gap: 12px;
+    transition: background 0.22s ease;
+    cursor: default;
+  }
+
+  .file-item:hover { background: rgba(124,111,224,0.05); }
+
+  .file-icon {
+    width: 28px;
+    flex-shrink: 0;
+    font-size: 16px;
+  }
+
+  .file-name {
+    flex: 1;
+    font-size: 14px;
+    color: var(--text-main);
+    font-weight: 400;
+    line-height: 1.5;
+  }
+
+  .file-tag {
+    font-size: 11px;
+    padding: 3px 10px;
+    border-radius: 100px;
+    background: var(--accent-light);
+    color: var(--accent-dark);
+    font-weight: 500;
+    flex-shrink: 0;
+  }
+
+  .status-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #ccc;
+    flex-shrink: 0;
+  }
+
+  .status-dot.ok { background: #4caf50; }
+  .status-dot.check { background: #ff9800; }
+
+  /* ─── COLOR ACCENTS ─── */
+  .c-blue   { background: #7C6FE0; }
+  .c-green  { background: #3DAA7A; }
+  .c-amber  { background: #C9924A; }
+  .c-red    { background: #C0506A; }
+  .c-purple { background: #9B6EE0; }
+  .c-teal   { background: #3DA0AA; }
+  .c-slate  { background: #6B80AA; }
+  .c-rose   { background: #C06090; }
+
+  /* ─── FOOTER ─── */
+  .footer {
+    max-width: 1100px;
+    margin: 36px auto 0;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    font-size: 12px;
+    color: var(--text-sub);
+    display: flex;
+    justify-content: space-between;
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 700px) {
+    .summary-grid { grid-template-columns: repeat(2, 1fr); }
+    .header { flex-direction: column; align-items: flex-start; gap: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <h1>📁 의장님 증서·계약서 관리 대시보드</h1>
+    <p>바탕화면 / 최효민파일 / 증서 &nbsp;·&nbsp; 총 23개 파일, 8개 분류</p>
+  </div>
+  <div class="header-date" id="today-date">2026.05.15 기준</div>
+</div>
+
+<!-- SUMMARY -->
+<div class="summary-grid">
+  <div class="summary-card">
+    <span class="label">전체 파일</span>
+    <span class="value">23</span>
+    <span class="sub">8개 분류</span>
+  </div>
+  <div class="summary-card">
+    <span class="label">투자 관련</span>
+    <span class="value">9</span>
+    <span class="sub">투자조합 5 · 주식인수 4</span>
+  </div>
+  <div class="summary-card">
+    <span class="label">주식 거래</span>
+    <span class="value">6</span>
+    <span class="sub">주식매매 계약서</span>
+  </div>
+  <div class="summary-card">
+    <span class="label">세금·기타</span>
+    <span class="value">5</span>
+    <span class="sub">증여세 2 · 공문 1 · 기타 1 · 전환사채 1</span>
+  </div>
+</div>
+
+<!-- CONTROLS -->
+<div class="controls">
+  <div class="search-box">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="회사명, 파일명 검색..." oninput="filterFiles()">
+  </div>
+  <div class="filter-tabs">
+    <button class="filter-tab active" onclick="filterCategory('all', this)">전체</button>
+    <button class="filter-tab" onclick="filterCategory('투자조합', this)">투자조합</button>
+    <button class="filter-tab" onclick="filterCategory('주식인수', this)">주식인수</button>
+    <button class="filter-tab" onclick="filterCategory('주식매매', this)">주식매매</button>
+    <button class="filter-tab" onclick="filterCategory('신주발행', this)">신주발행</button>
+    <button class="filter-tab" onclick="filterCategory('전환사채', this)">전환사채</button>
+    <button class="filter-tab" onclick="filterCategory('증여세', this)">증여세</button>
+    <button class="filter-tab" onclick="filterCategory('공문', this)">공문</button>
+    <button class="filter-tab" onclick="filterCategory('기타', this)">기타</button>
+  </div>
+</div>
+
+<!-- SECTIONS -->
+<div class="sections" id="sections">
+
+  <!-- 투자조합 -->
+  <div class="section" data-category="투자조합">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-accent c-blue"></div>
+      <span class="section-title">① 투자조합 출자증서·출자증표</span>
+      <span class="section-count c-blue">5건</span>
+      <span class="section-toggle open">▲</span>
+    </div>
+    <div class="section-body open">
+      <div class="file-list">
+        <div class="file-item"><span class="file-icon">📄</span><span class="file-name">LC개인투자조합 7호 출자증표</span><span class="file-tag">LC7호</span></div>
+        <div class="file-item"><span class="file-icon">📄</span><span class="file-name">LC개인투자조합 (이찬구)</span><span class="file-tag">LC조합</span></div>
+        <div class="file-item"><span class="file-icon">📄</span><span class="file-name">LC투자조합 4호 (이찬구)</span><span class="file-tag">LC4호</span></div>
+        <div class="file-item"><span class="file-icon">📄</span><span class="file-name">리벤처스 더시드 출자증서</span><span class="file-tag">리벤처스</span></div>
+        <div class="file-item"><span class="file-icon">📄</span><span class="file-name">베스트 17호 투자조합 출자증서</span><span class="file-tag">베스트17호</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 주식인수 -->
+  <div class="section" data-category="주식인수">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-accent c-green"></div>
+      <span class="section-title">② 신주인수·주식인수 계약서</span>
+      <span class="section-count c-green">4건</span>
+      <span class="section-toggle">▲</span>
+    </div>
+    <div class="section-body">
+      <div class="file-list">
+        <div class="file-item"><span class="file-icon">📄</span><span class="file-name">22년 투자 — 제페토, LC7, 텐텍</span><span class="file-tag">2022</span></div>
+        <div class="file-item"><span class="file-icon">📄</span><span class="file-name">비시드파트너스 주식인수계약서</span><span class="file-tag">비시드</span></div>
+        <div class="file-item"><span class="file-icon">📄</span><span class="file-name">비시드파트너스 + 장원태 금전소비대차계약서</span><span class="file-tag">비시드</span></div>
+        <div class="file-item"><span class="file-icon">📄</span><span class="file-name">어니스트AI 투자계약서</span><span class="file-tag">어니스트AI</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 주식매매 -->
+  <div class="section" data-category="주식매매">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-accent c-amber"></div>
+      <span class="section-title">③ 주식 양수도·매매 계약서</span>
+      <span class="section-count c-amber">6건</span>
+      <span class="section-toggle">▲</span>
+    </div>
+    <div class="section-body">
+      <div class="file-list">
+        <div class="file-item"><span class="file-icon">📄</span><span class="file-name">(주)엔쓰리엔 주식매매 관련</span><span class="file-tag">엔쓰리엔</span></div>
+        <div class="file-item"><span class="file-icon">📄</span><span class="file-name">뮤지코인 주식매매계약서 — 오라클1호합자조합 (김윤수·김현수)</span><span class="file-tag">뮤지코인</span></div>
+        <div class="file-item"><span class="file-icon">📄</span><span class="file-name">뮤직카우 양수도계약서 — 인에이블</span><span class="file-tag">뮤직카우</span></div>
+        <div class="file-item"><span class="file-icon">📄</span><span class="file-name">아톤모빌리티 매수 (강철)</span><span class="file-tag">아톤모빌리티</span></div>
+        <div class="file-item"><span class="file-icon">📄</span><span class="file-name">에이티지씨 계약서</span><span class="file-tag">ATGC</span></div>
+        <div class="file-item"><span class="file-icon">📄</span><span class="file-name">주식매매계약서 — 비시드파트너스, 쿼트백</span><span class="file-tag">비시드·쿼트백</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 신주발행 -->
+  <div class="section" data-category="신주발행">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-accent c-purple"></div>
+      <span class="section-title">④ 신주발행통지·주권미발행 확인서</span>
+      <span class="section-count c-purple">2건</span>
+      <span class="section-toggle">▲</span>
+    </div>
+    <div class="section-body">
+      <div class="file-list">
+        <div class="file-item"><span class="file-icon">📄</span><span class="file-name">(주)엠비아이솔루션 주식 미발행 확인서 등</span><span class="file-tag">MBI솔루션</span></div>
+        <div class="file-item"><span class="file-icon">📄</span><span class="file-name">(주)유엑스엔 신주발행 통지서 등</span><span class="file-tag">UXN</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 전환사채 -->
+  <div class="section" data-category="전환사채">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-accent c-teal"></div>
+      <span class="section-title">⑤ 전환사채·전환우선주</span>
+      <span class="section-count c-teal">2건</span>
+      <span class="section-toggle">▲</span>
+    </div>
+    <div class="section-body">
+      <div class="file-list">
+        <div class="file-item"><span class="file-icon">📄</span><span class="file-name">(주)유메딕스 전환사채 관련</span><span class="file-tag">유메딕스</span></div>
+        <div class="file-item"><span class="file-icon">📄</span><span class="file-name">비엠이(뮤직카우) 관련</span><span class="file-tag">BME</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 증여세 -->
+  <div class="section" data-category="증여세">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-accent c-red"></div>
+      <span class="section-title">⑥ 증여세 신고 자료</span>
+      <span class="section-count c-red">2건</span>
+      <span class="section-toggle">▲</span>
+    </div>
+    <div class="section-body">
+      <div class="file-list">
+        <div class="file-item"><span class="file-icon">📄</span><span class="file-name">김윤수·김현수 증여세 신고납부 자료</span><span class="file-tag">증여세</span></div>
+        <div class="file-item"><span class="file-icon">📄</span><span class="file-name">폰티스 주주 3인 증여세 신고 (진산회계법인)</span><span class="file-tag">폰티스</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 공문 -->
+  <div class="section" data-category="공문">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-accent c-slate"></div>
+      <span class="section-title">⑦ 주식 매매내역·공문</span>
+      <span class="section-count c-slate">1건</span>
+      <span class="section-toggle">▲</span>
+    </div>
+    <div class="section-body">
+      <div class="file-list">
+        <div class="file-item"><span class="file-icon">📄</span><span class="file-name">상장시 아톤 주식 매매내역</span><span class="file-tag">아톤</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 기타 -->
+  <div class="section" data-category="기타">
+    <div class="section-header" onclick="toggleSection(this)">
+      <div class="section-accent c-rose"></div>
+      <span class="section-title">⑧ 기타 — 저작권료 청구권 양수도</span>
+      <span class="section-count c-rose">1건</span>
+      <span class="section-toggle">▲</span>
+    </div>
+    <div class="section-body">
+      <div class="file-list">
+        <div class="file-item"><span class="file-icon">📄</span><span class="file-name">뮤직카우 저작권료 청구권 양수도 (박인조)</span><span class="file-tag">뮤직카우</span></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span>📁 C:\Users\admin\Desktop\최효민파일\증서</span>
+  <span>파일 내용 미열람 · 파일명 기반 분류</span>
+</div>
+
+<script>
+  // 날짜
+  const d = new Date();
+  document.getElementById('today-date').textContent =
+    `${d.getFullYear()}.${String(d.getMonth()+1).padStart(2,'0')}.${String(d.getDate()).padStart(2,'0')} 기준`;
+
+  // 섹션 토글
+  function toggleSection(header) {
+    const body = header.nextElementSibling;
+    const toggle = header.querySelector('.section-toggle');
+    const isOpen = body.classList.contains('open');
+    body.classList.toggle('open', !isOpen);
+    toggle.classList.toggle('open', !isOpen);
+  }
+
+  // 카테고리 필터
+  let activeCategory = 'all';
+
+  function filterCategory(cat, btn) {
+    activeCategory = cat;
+    document.querySelectorAll('.filter-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    applyFilters();
+  }
+
+  // 검색
+  function filterFiles() { applyFilters(); }
+
+  function applyFilters() {
+    const q = document.getElementById('searchInput').value.toLowerCase();
+    document.querySelectorAll('.section').forEach(sec => {
+      const cat = sec.dataset.category;
+      const catMatch = activeCategory === 'all' || cat === activeCategory;
+
+      if (!q) {
+        sec.style.display = catMatch ? '' : 'none';
+        sec.querySelectorAll('.file-item').forEach(item => item.style.display = '');
+        return;
+      }
+
+      const items = sec.querySelectorAll('.file-item');
+      let anyVisible = false;
+      items.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        const match = text.includes(q);
+        item.style.display = match ? '' : 'none';
+        if (match) anyVisible = true;
+      });
+
+      sec.style.display = (catMatch && anyVisible) ? '' : 'none';
+    });
+  }
+</script>
+</body>
+</html>
