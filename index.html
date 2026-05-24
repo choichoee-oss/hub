@@ -279,6 +279,148 @@
     color: var(--text-sub);
     letter-spacing: 0.04em;
   }
+
+  /* ─── PASSWORD MODAL ─── */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(26, 26, 46, 0.45);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-overlay.open {
+    display: flex;
+  }
+
+  .modal-card {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 2.8rem 2.4rem 2.4rem;
+    width: 100%;
+    max-width: 340px;
+    box-shadow: 0 24px 64px rgba(124,111,224,0.22);
+    text-align: center;
+    animation: modalIn 0.32s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: scale(0.88) translateY(16px); }
+    to   { opacity: 1; transform: scale(1) translateY(0); }
+  }
+
+  .modal-icon {
+    width: 62px;
+    height: 62px;
+    border-radius: 18px;
+    background: var(--accent-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.4rem;
+  }
+
+  .modal-icon svg {
+    width: 28px;
+    height: 28px;
+    stroke: var(--accent);
+    fill: none;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .modal-title {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-main);
+    margin-bottom: 0.3rem;
+  }
+
+  .modal-desc {
+    font-size: 12px;
+    color: var(--text-sub);
+    margin-bottom: 1.6rem;
+  }
+
+  .modal-input {
+    width: 100%;
+    padding: 13px 16px;
+    border: 2px solid #EEEEF5;
+    border-radius: 14px;
+    font-size: 20px;
+    font-family: 'Noto Sans KR', sans-serif;
+    letter-spacing: 0.5em;
+    text-align: center;
+    color: var(--text-main);
+    outline: none;
+    transition: border-color 0.18s;
+    background: var(--bg);
+  }
+
+  .modal-input:focus {
+    border-color: var(--accent);
+    background: #fff;
+  }
+
+  .modal-error {
+    font-size: 12px;
+    color: #E05C5C;
+    margin-top: 0.6rem;
+    min-height: 18px;
+    transition: opacity 0.2s;
+  }
+
+  .modal-btn {
+    width: 100%;
+    margin-top: 1.2rem;
+    padding: 14px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    font-size: 14px;
+    font-weight: 700;
+    font-family: 'Noto Sans KR', sans-serif;
+    cursor: pointer;
+    transition: background 0.18s, transform 0.18s;
+  }
+
+  .modal-btn:hover {
+    background: var(--accent-dark);
+    transform: translateY(-1px);
+  }
+
+  .modal-btn:active {
+    transform: translateY(0);
+  }
+
+  .modal-cancel {
+    margin-top: 0.9rem;
+    font-size: 12px;
+    color: var(--text-sub);
+    cursor: pointer;
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 8px;
+    transition: color 0.15s;
+  }
+
+  .modal-cancel:hover { color: var(--accent); }
+
+  @keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    20%       { transform: translateX(-8px); }
+    40%       { transform: translateX(8px); }
+    60%       { transform: translateX(-6px); }
+    80%       { transform: translateX(6px); }
+  }
+
+  .shake { animation: shake 0.38s ease; }
 </style>
 </head>
 <body>
@@ -307,7 +449,7 @@
     </div>
 
     <!-- 카드 2: 계약서 관리 -->
-    <div class="app-card" onclick="openApp('계약서관리.html', '계약서 관리', this)">
+    <div class="app-card" onclick="openContract(this)">
       <div class="card-icon">
         <svg viewBox="0 0 24 24">
           <path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
@@ -352,6 +494,33 @@
   <div class="home-footer">앱을 선택해 바로 시작하세요</div>
 </div>
 
+<!-- ③ 비밀번호 모달 -->
+<div class="modal-overlay" id="pw-modal" onclick="handleOverlayClick(event)">
+  <div class="modal-card" id="pw-card">
+    <div class="modal-icon">
+      <svg viewBox="0 0 24 24">
+        <rect x="5" y="11" width="14" height="10" rx="2"/>
+        <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+        <circle cx="12" cy="16" r="1.2" fill="currentColor" stroke="none"/>
+      </svg>
+    </div>
+    <div class="modal-title">계약서 관리</div>
+    <div class="modal-desc">접근 비밀번호를 입력하세요</div>
+    <input
+      class="modal-input"
+      id="pw-input"
+      type="password"
+      maxlength="20"
+      placeholder="••••"
+      onkeydown="if(event.key==='Enter') checkPassword()"
+      autocomplete="off"
+    />
+    <div class="modal-error" id="pw-error"></div>
+    <button class="modal-btn" onclick="checkPassword()">확인</button>
+    <div class="modal-cancel" onclick="closeModal()">취소</div>
+  </div>
+</div>
+
 <!-- ② 앱 화면 (iframe) -->
 <div id="app-screen">
   <div class="app-topbar">
@@ -366,7 +535,44 @@
 </div>
 
 <script>
+  const CONTRACT_PW = '2212';
+  let pendingCard = null;
   let activeCard = null;
+
+  function openContract(cardEl) {
+    pendingCard = cardEl;
+    document.getElementById('pw-input').value = '';
+    document.getElementById('pw-error').textContent = '';
+    document.getElementById('pw-modal').classList.add('open');
+    setTimeout(() => document.getElementById('pw-input').focus(), 80);
+  }
+
+  function checkPassword() {
+    const val = document.getElementById('pw-input').value;
+    if (val === CONTRACT_PW) {
+      const card = pendingCard;
+      closeModal();
+      openApp('계약서관리.html', '계약서 관리', card);
+    } else {
+      const input = document.getElementById('pw-input');
+      const err   = document.getElementById('pw-error');
+      err.textContent = '비밀번호가 올바르지 않습니다';
+      input.classList.remove('shake');
+      void input.offsetWidth;
+      input.classList.add('shake');
+      input.value = '';
+      setTimeout(() => input.classList.remove('shake'), 400);
+    }
+  }
+
+  function closeModal() {
+    document.getElementById('pw-modal').classList.remove('open');
+    pendingCard = null;
+  }
+
+  function handleOverlayClick(e) {
+    if (e.target === document.getElementById('pw-modal')) closeModal();
+  }
 
   function openApp(file, label, cardEl) {
     if (activeCard) activeCard.classList.remove('active');
