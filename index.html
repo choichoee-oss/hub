@@ -448,7 +448,76 @@
       <div class="card-sub">일정 · 현황 한눈에</div>
     </div>
 
-    <!-- 카드 2: 계약서 관리 -->
+    <!-- 카드 2: 공지 생성기 -->
+    <div class="app-card" onclick="openApp('공지생성기.html', '공지 생성기', this)">
+      <div class="card-icon">
+        <svg viewBox="0 0 24 24">
+          <path d="M18 8a6 6 0 0 1-6 6H6l-3 3V8a6 6 0 0 1 6-6h3"/>
+          <circle cx="18" cy="5" r="3"/>
+        </svg>
+      </div>
+      <div class="card-label">공지 생성기</div>
+      <div class="card-sub">임원 · 임직원 공지</div>
+    </div>
+
+    <!-- 카드 3: 선물 목록 관리 -->
+    <div class="app-card" onclick="openApp('선물목록명단관리.html', '선물 목록 및 명단 관리', this)">
+      <div class="card-icon">
+        <svg viewBox="0 0 24 24">
+          <polyline points="20 12 20 22 4 22 4 12"/>
+          <rect x="2" y="7" width="20" height="5" rx="1"/>
+          <line x1="12" y1="22" x2="12" y2="7"/>
+          <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/>
+          <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/>
+        </svg>
+      </div>
+      <div class="card-label">선물 목록 · 명단</div>
+      <div class="card-sub">수·발신 선물 관리</div>
+    </div>
+
+    <!-- 카드 4: 계열사 임원 관리 -->
+    <div class="app-card" onclick="openApp('계열사임원관리.html', '계열사 임원 관리', this)">
+      <div class="card-icon">
+        <svg viewBox="0 0 24 24">
+          <rect x="2" y="7" width="20" height="15" rx="2"/>
+          <path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/>
+          <line x1="12" y1="12" x2="12" y2="16"/>
+          <line x1="8" y1="14" x2="16" y2="14"/>
+        </svg>
+      </div>
+      <div class="card-label">계열사 임원 관리</div>
+      <div class="card-sub">임원 현황 · 연락처</div>
+    </div>
+
+    <!-- 카드 5: 의장님·가족 정보 -->
+    <div class="app-card" onclick="openApp('의장님가족정보.html', '의장님 · 가족 정보', this)">
+      <div class="card-icon">
+        <svg viewBox="0 0 24 24">
+          <circle cx="9" cy="7" r="3"/>
+          <path d="M3 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"/>
+          <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+          <path d="M21 21v-2a4 4 0 0 0-3-3.85"/>
+        </svg>
+      </div>
+      <div class="card-label">의장님 · 가족 정보</div>
+      <div class="card-sub">인적사항 · 가족관계</div>
+    </div>
+
+    <!-- 카드 6: 계정·ID/PW 관리 -->
+    <div class="app-card" onclick="openApp('계정관리.html', '계정 · ID/PW 관리', this)">
+      <div class="card-icon">
+        <svg viewBox="0 0 24 24">
+          <circle cx="8" cy="15" r="4"/>
+          <line x1="11.5" y1="11.5" x2="22" y2="1"/>
+          <line x1="19" y1="4" x2="21" y2="6"/>
+          <line x1="16" y1="7" x2="18" y2="9"/>
+        </svg>
+      </div>
+      <div class="card-label">계정 · ID/PW</div>
+      <div class="card-sub">각종 계정 정보</div>
+    </div>
+
+    <!-- 카드 7: 계약서 관리 -->
     <div class="app-card" onclick="openContract(this)">
       <div class="card-icon">
         <svg viewBox="0 0 24 24">
@@ -462,31 +531,16 @@
       <div class="card-sub">의장님 계약 문서</div>
     </div>
 
-    <!-- 카드 3: 공지 생성기 -->
-    <div class="app-card" onclick="openApp('공지생성기.html', '공지 생성기', this)">
+    <!-- 카드 8: 보험 관리 -->
+    <div class="app-card" onclick="openApp('보험관리.html', '보험 관리', this)">
       <div class="card-icon">
         <svg viewBox="0 0 24 24">
-          <path d="M18 8a6 6 0 0 1-6 6H6l-3 3V8a6 6 0 0 1 6-6h3"/>
-          <circle cx="18" cy="5" r="3"/>
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          <polyline points="9 12 11 14 15 10"/>
         </svg>
       </div>
-      <div class="card-label">공지 생성기</div>
-      <div class="card-sub">임원 · 임직원 공지</div>
-    </div>
-
-    <!-- 카드 4: 선물 목록 관리 -->
-    <div class="app-card" onclick="openApp('선물목록명단관리.html', '선물 목록 및 명단 관리', this)">
-      <div class="card-icon">
-        <svg viewBox="0 0 24 24">
-          <polyline points="20 12 20 22 4 22 4 12"/>
-          <rect x="2" y="7" width="20" height="5" rx="1"/>
-          <line x1="12" y1="22" x2="12" y2="7"/>
-          <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/>
-          <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/>
-        </svg>
-      </div>
-      <div class="card-label">선물 목록 · 명단</div>
-      <div class="card-sub">수·발신 선물 관리</div>
+      <div class="card-label">보험 관리</div>
+      <div class="card-sub">보험 현황 · 갱신</div>
     </div>
 
   </div>
